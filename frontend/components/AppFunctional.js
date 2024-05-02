@@ -98,7 +98,7 @@ export default function AppFunctional(props) {
       setSteps(steps + 1)
     }
 
-    else { setMessage(`You May Not Move  ${evt.target.id}`) }
+    else { setMessage(`You can't go ${evt.target.id}`) }
 
   }
 
