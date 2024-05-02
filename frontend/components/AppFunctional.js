@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import * as Yup from "yup"; 
 
 // Suggested initial states
 const initialMessage = ''
@@ -7,6 +8,13 @@ const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
 
 const arr = [...Array(9).keys()]
+
+// const formSchema = yup.object().shape({
+//   email: yup
+//          .string()
+//          .email('Must be a valid email address')
+//          .required("You're gotta give an email")
+// })
 
 export default function AppFunctional(props) {
   // THE FOLLOWING HELPERS ARE JUST RECOMMENDATIONS.
@@ -75,10 +83,7 @@ export default function AppFunctional(props) {
       newIdx = index - 3
     }
 
-
-
     return newIdx
-
   }
 
   function move(evt) {
@@ -93,7 +98,7 @@ export default function AppFunctional(props) {
       setSteps(steps + 1)
     }
 
-    else { setMessage(`You Carn't go ${evt.target.id}`) }
+    else { setMessage(`You May Not Move  ${evt.target.id}`) }
 
   }
 
