@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import * as Yup from "yup"; 
+import React, { useState, useEffect } from 'react'
+import axios from "axios";
 
 // Suggested initial states
 const initialMessage = ''
@@ -9,12 +9,6 @@ const initialIndex = 4 // the index the "B" is at
 
 const arr = [...Array(9).keys()]
 
-// const formSchema = yup.object().shape({
-//   email: yup
-//          .string()
-//          .email('Must be a valid email address')
-//          .required("You're gotta give an email")
-// })
 
 export default function AppFunctional(props) {
   // THE FOLLOWING HELPERS ARE JUST RECOMMENDATIONS.
@@ -25,8 +19,9 @@ export default function AppFunctional(props) {
   const [steps, setSteps] = useState(initialSteps)
   const [index, setIndex] = useState(initialIndex)
 
-  let cord = getXYMessage()
 
+  const cords = getXY()
+  const cordMsg = getXYMessage()
 
 
 
@@ -40,6 +35,7 @@ export default function AppFunctional(props) {
           return { x: j + 1, y: i + 1 }
       }
     }
+    return { x: 2, y: 2 }
   }
 
   function getXYMessage() {
@@ -47,7 +43,7 @@ export default function AppFunctional(props) {
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
 
-    let { x, y } = getXY()
+    let { x, y } = cords
     return `Coordinates (${x},${y})`
   }
 
@@ -64,7 +60,7 @@ export default function AppFunctional(props) {
     // of the "B" would be. If the move is impossible because we are at the edge of the grid,
     // this helper should return the current index unchanged.
 
-    let { x, y } = getXY()
+    let { x, y } = cords
     let newIdx = index
 
     if (direction == 'right' && x < 3) {
@@ -83,7 +79,10 @@ export default function AppFunctional(props) {
       newIdx = index - 3
     }
 
+
+
     return newIdx
+
   }
 
   function move(evt) {
@@ -96,25 +95,69 @@ export default function AppFunctional(props) {
       setMessage('')
       setIndex(newIdx)
       setSteps(steps + 1)
+
     }
 
-    else { setMessage(`You can't go ${evt.target.id}`) }
+    else { setMessage(`You Carn't go ${evt.target.id}`) }
 
   }
 
+
+
   function onChange(evt) {
     // You will need this to update the value of the input.
+    const { name, value } = evt.target
+
+    inputChange(name, value)
+  }
+
+  const inputChange = (name, value) => {
+    // 🔥 STEP 10- RUN VALIDATION WITH YUP
+
+
+
+    setEmail(value)
+
+    validate(name, value)
+  }
+
+  const postData = newData => {
+
+    axios.post("http://localhost:9000/api/result", newData)
+      .then(res => {
+
+        setMessage(res.data.message);
+      })
+      .catch(err => setMessage(err.message))
+      .finally(() => setEmail(initialEmail))
   }
 
   function onSubmit(evt) {
     // Use a POST request to send a payload to the server.
+    evt.preventDefault()
+
+    let { x, y } = cords
+    const formData = {
+      "email": email,
+      "x": x,
+      "y": y,
+      "steps": steps
+    }
+
+    postData(formData);
   }
+
+
+  useEffect(() => {
+    () => cords = getXY()
+  }, [index])
+
 
   return (
     <div id="wrapper" className={props.className}>
       <div className="info">
-        <h3 id="coordinates">{cord}</h3>
-        <h3 id="steps">{`You moved ${steps} ${steps === 1 ? 'time' : 'times'}`}</h3>
+        <h3 id="coordinates">{cordMsg}</h3>
+        <h3 id="steps">You moved {steps} time{steps == 1 ? '' : 's'}</h3>
       </div>
       <div id="grid">
         {
@@ -135,8 +178,8 @@ export default function AppFunctional(props) {
         <button id="down" onClick={move}>DOWN</button>
         <button id="reset" onClick={reset}>reset</button>
       </div>
-      <form>
-        <input id="email" type="email" placeholder="type email"></input>
+      <form onSubmit={onSubmit}>
+        <input id="email" type="email" placeholder="type email" onChange={onChange} value={email}></input>
         <input id="submit" type="submit"></input>
       </form>
     </div>
