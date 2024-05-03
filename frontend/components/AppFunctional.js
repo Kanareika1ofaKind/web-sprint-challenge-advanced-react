@@ -98,7 +98,7 @@ export default function AppFunctional(props) {
 
     }
 
-    else { setMessage(`You Carn't go ${evt.target.id}`) }
+    else { setMessage(`You can't go ${evt.target.id}`) }
 
   }
 
