@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from "axios";
+import * as Yup from 'yup';
 
 // Suggested initial states
 const initialMessage = ''
@@ -112,13 +113,8 @@ export default function AppFunctional(props) {
   }
 
   const inputChange = (name, value) => {
-    // 🔥 STEP 10- RUN VALIDATION WITH YUP
-
-
 
     setEmail(value)
-
-    validate(name, value)
   }
 
   const postData = newData => {
@@ -138,13 +134,26 @@ export default function AppFunctional(props) {
 
     let { x, y } = cords
     const formData = {
-      "email": email,
-      "x": x,
-      "y": y,
-      "steps": steps
+      email: email
     }
 
-    postData(formData);
+    const schema = Yup.object().shape({
+      email: Yup.string()
+        .email('Ouch: email must be a valid email')
+        .required('Ouch: email is required'),
+    });
+
+    schema.validate(formData)
+      .then(() =>
+        postData({
+          "email": email,
+          "x": x,
+          "y": y,
+          "steps": steps
+        }))
+      .catch(error => setMessage(error.message))
+
+
   }
 
 
