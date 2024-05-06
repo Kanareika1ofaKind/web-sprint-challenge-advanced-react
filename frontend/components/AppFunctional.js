@@ -117,16 +117,7 @@ export default function AppFunctional(props) {
     setEmail(value)
   }
 
-  const postData = newData => {
-
-    axios.post("http://localhost:9000/api/result", newData)
-      .then(res => {
-
-        setMessage(res.data.message);
-      })
-      .catch(err => setMessage(err.message))
-      .finally(() => setEmail(initialEmail))
-  }
+ 
 
   function onSubmit(evt) {
     // Use a POST request to send a payload to the server.
@@ -134,28 +125,34 @@ export default function AppFunctional(props) {
 
     let { x, y } = cords
     const formData = {
-      email: email
-    }
-
-    const schema = Yup.object().shape({
-      email: Yup.string()
-        .email('Ouch: email must be a valid email')
-        .required('Ouch: email is required'),
-    });
-
-    schema.validate(formData)
-      .then(() =>
-        postData({
-          "email": email,
+      email: email,
           "x": x,
           "y": y,
           "steps": steps
-        }))
-      .catch(error => setMessage(error.message))
+        }
 
+      axios.post("http://localhost:9000/api/result", formData)
+        .then(res => {
+          console.log(res.data);
+
+          setMessage(res.data.message);
+        })
+        .catch(err => setMessage(err.response.data.message))
+        .finally(() => setEmail(initialEmail))
+    
+
+    // const schema = Yup.object().shape({
+    //   email: Yup.string()
+    //     .email('Ouch: email must be a valid email')
+    //     .required('Ouch: email is required'),
+    // });
+
+    // schema.validate(formData)
+    //   .then(() =>
+    //     postData())
+      // .catch(error => setMessage(error.message))
 
   }
-
 
   useEffect(() => {
     () => cords = getXY()
