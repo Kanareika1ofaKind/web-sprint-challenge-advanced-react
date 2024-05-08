@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import axios from "axios";
-import * as Yup from 'yup';
 
 // Suggested initial states
 const initialMessage = ''
@@ -80,8 +79,6 @@ export default function AppFunctional(props) {
       newIdx = index - 3
     }
 
-
-
     return newIdx
 
   }
@@ -104,7 +101,6 @@ export default function AppFunctional(props) {
   }
 
 
-
   function onChange(evt) {
     // You will need this to update the value of the input.
     const { name, value } = evt.target
@@ -116,7 +112,6 @@ export default function AppFunctional(props) {
 
     setEmail(value)
   }
-
  
 
   function onSubmit(evt) {
@@ -139,18 +134,6 @@ export default function AppFunctional(props) {
         })
         .catch(err => setMessage(err.response.data.message))
         .finally(() => setEmail(initialEmail))
-    
-
-    // const schema = Yup.object().shape({
-    //   email: Yup.string()
-    //     .email('Ouch: email must be a valid email')
-    //     .required('Ouch: email is required'),
-    // });
-
-    // schema.validate(formData)
-    //   .then(() =>
-    //     postData())
-      // .catch(error => setMessage(error.message))
 
   }
 
